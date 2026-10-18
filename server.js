@@ -67,7 +67,7 @@ app.get("/api/clubes/:id", (req, res) => {
     const clubEncontrado = clubes.find(c => c.id === clubIdBusqueda)
     if (!clubEncontrado) {
         return res.status(404).json({
-            "error": `No existe el club ${idSolicitado}`
+            "error": `No existe el club con Id: ${idSolicitado}`
         })
     }
 
