@@ -89,7 +89,7 @@ app.get("/api/titulos/:club", (req, res) => {
         })
     }
 
-    return res.status(200).json(clubEncontrado.titulos)
+    return res.status(200).json({"titulos": clubEncontrado.titulos})
 })
 
 app.get("/api/titulos", (req, res) => {
