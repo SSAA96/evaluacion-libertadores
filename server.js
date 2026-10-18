@@ -24,8 +24,9 @@ app.get("/api/clubes", (req, res) => {
         );
 
         if (!paisEncontrado) {
+            const paisSolicitado = nombrePais || "indicado"
             return res.status(404).json({
-                "error": `No existe el país ${typeof pais === "string" ? pais : "indicado"}`
+                "error": `No existe el país ${paisSolicitado}`
             });
         }
         
@@ -33,18 +34,18 @@ app.get("/api/clubes", (req, res) => {
             (club) => club.paisId === paisEncontrado.id
         ).map(agregarNombrePais);
 
-        return res.json({
+        return res.status(200).json({
             "clubes": clubesFiltrados
         });
     }
 
-    res.status(200).send({
+    return res.status(200).json({
         "clubes": clubes.map(agregarNombrePais)
     })
 })
 
 app.get("/api/clubes/:id", (req, res) => {
-    const clubIdBusqueda = Number(req.params.id)
+    const clubIdBusqueda = req.params.id
     const clubEncontrado = Number.isInteger(clubIdBusqueda)
         ? clubes.find(c => c.id === clubIdBusqueda)
         : undefined
@@ -58,11 +59,11 @@ app.get("/api/clubes/:id", (req, res) => {
 })
 
 app.get("/api/titulos/:club", (req, res) => {
-    const clubNombreBusqueda = req.params.club
+    const clubNombreBusqueda = req.params.club.trim()
     const clubEncontrado = clubes.find(c => c.nombre.toLowerCase() === clubNombreBusqueda.toLowerCase())
     if (!clubEncontrado) {
         return res.status(404).json({
-            "error": `No existe el club ${clubNombreBusqueda}`
+            "error": `No existe el club ${clubNombreBusqueda || "indicado"}`
         })
     }
 
@@ -74,7 +75,7 @@ app.get("/api/titulos", (req, res) => {
         .flatMap((c) => c.titulos)
         .sort((a, b) => a - b);
 
-    res.status(200).send({
+    return res.status(200).json({
         "titulos": todosLosTitulos
     })
 })
@@ -87,20 +88,17 @@ app.get("/api/estadisticas", (req, res) => {
         0
     );
 
-    const mapaPaises = paises.reduce((acc, p) => {
-        acc[p.id] = p.nombre;
-        return acc;
-    }, {});
-
     const titulosPorPais = clubes.reduce((acc, club) => {
-        const nombrePais = mapaPaises[club.paisId];
-        if (nombrePais) {
-            acc[nombrePais] = (acc[nombrePais] || 0) + club.titulos.length;
-        }
-        return acc;
-    }, {});
+        const pais = paises.find((p) => p.id === club.paisId)
 
-    res.status(200).send({
+        if (pais) {
+            acc[pais.nombre] = (acc[pais.nombre] ?? 0) + club.titulos.length
+        }
+
+        return acc
+    }, {})
+
+    return res.status(200).json({
         totalClubes,
         totalTitulos,
         titulosPorPais,
