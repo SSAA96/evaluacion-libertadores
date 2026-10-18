@@ -9,14 +9,15 @@ const PORT = 3000
 
 app.get("/api/clubes", (req, res) => {
     const { pais } = req.query
-    if (pais) {
+    if (pais !== undefined) {
+        const nombrePais = typeof pais === "string" ? pais.trim() : ""
         const paisEncontrado = paises.find(
-            (p) => p.nombre.toLowerCase() === pais.toLowerCase()
+            (p) => p.nombre.toLowerCase() === nombrePais.toLowerCase()
         );
 
         if (!paisEncontrado) {
-            return res.status(404).json({ 
-                "error": `No se encontró el País: ${pais}`
+            return res.status(404).json({
+                "error": `No existe el país ${typeof pais === "string" ? pais : "indicado"}`
             });
         }
         
@@ -36,7 +37,9 @@ app.get("/api/clubes", (req, res) => {
 
 app.get("/api/clubes/:id", (req, res) => {
     const clubIdBusqueda = Number(req.params.id)
-    const clubEncontrado = clubes.find(c => c.id === clubIdBusqueda)
+    const clubEncontrado = Number.isInteger(clubIdBusqueda)
+        ? clubes.find(c => c.id === clubIdBusqueda)
+        : undefined
     if (!clubEncontrado) {
         return res.status(404).json({
             "error": `No existe el club ${req.params.id}`
