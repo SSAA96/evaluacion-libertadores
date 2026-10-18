@@ -23,9 +23,9 @@ El servidor queda disponible en **http://localhost:3000**. El comando `yarn dev`
 | Método y ruta | Descripción | Respuesta esperada |
 | --- | --- | --- |
 | `GET /api/clubes` | Lista los 16 clubes. | `200`, objeto con la propiedad `clubes`. |
-| `GET /api/clubes/:id` | Busca un club por su ID. | `200` con el club o `404` con un mensaje de error JSON. |
-| `GET /api/clubes?pais=Chile` | Filtra los clubes por país; no distingue mayúsculas. | `200`, objeto con la propiedad `clubes`, o `404` si el país no existe. |
-| `GET /api/titulos/:club` | Busca los años de títulos por nombre del club; no distingue mayúsculas. | `200` con un array, incluso `[]` si no tiene títulos; `404` si el club no existe. |
+| `GET /api/clubes/:id` | Busca un club por su ID. | `200` con el club; `400` si el ID no contiene solo números; `404` si el ID no existe. |
+| `GET /api/clubes?pais=Chile` | Filtra los clubes por país; no distingue mayúsculas. | `200`, objeto con la propiedad `clubes`; `400` si el parámetro está vacío o repetido; `404` si el país no existe. |
+| `GET /api/titulos/:club` | Busca los años de títulos por nombre del club; no distingue mayúsculas. | `200` con un array, incluso `[]` si no tiene títulos; `400` si el nombre está vacío; `404` si el club no existe. |
 | `GET /api/titulos` | Lista todos los años de títulos en orden ascendente. | `200` con la propiedad `titulos`. |
 | `GET /api/estadisticas` | Resume clubes, títulos totales y títulos por país. | `200` con los totales y el desglose por país. |
 
@@ -40,7 +40,7 @@ GET http://localhost:3000/api/titulos/colo-colo
 GET http://localhost:3000/api/estadisticas
 ```
 
-Un club que existe pero no ha ganado la Copa devuelve `200` con `[]`. Un ID, país o nombre de club inexistente devuelve `404` con un objeto JSON que contiene `error`.
+Un club que existe pero no ha ganado la Copa devuelve `200` con `[]`. Un ID, país o nombre de club inexistente devuelve `404`; los parámetros con formato inválido devuelven `400`. Los errores incluyen un objeto JSON con `error`.
 
 ## Video de demostración
 

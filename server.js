@@ -18,15 +18,20 @@ const agregarNombrePais = (club) => {
 app.get("/api/clubes", (req, res) => {
     const { pais } = req.query
     if (pais !== undefined) {
-        const nombrePais = typeof pais === "string" ? pais.trim() : ""
+        if (typeof pais !== "string" || pais.trim() === "") {
+            return res.status(400).json({
+                error: "Debe ingresar un nombre de país válido"
+            })
+        }
+
+        const nombrePais = pais.trim()
         const paisEncontrado = paises.find(
             (p) => p.nombre.toLowerCase() === nombrePais.toLowerCase()
         );
 
         if (!paisEncontrado) {
-            const paisSolicitado = nombrePais || "indicado"
             return res.status(404).json({
-                "error": `No existe el país ${paisSolicitado}`
+                "error": `No existe el país ${nombrePais}`
             });
         }
         
@@ -45,13 +50,24 @@ app.get("/api/clubes", (req, res) => {
 })
 
 app.get("/api/clubes/:id", (req, res) => {
-    const clubIdBusqueda = req.params.id
-    const clubEncontrado = Number.isInteger(clubIdBusqueda)
-        ? clubes.find(c => c.id === clubIdBusqueda)
-        : undefined
+    const idSolicitado = req.params.id
+    if (!/^\d+$/.test(idSolicitado)) {
+        return res.status(400).json({
+            error: "El ID debe contener solo números"
+        })
+    }
+
+    const clubIdBusqueda = Number(idSolicitado)
+    if (!Number.isSafeInteger(clubIdBusqueda)) {
+        return res.status(400).json({
+            error: "El ID debe ser un número entero válido"
+        })
+    }
+
+    const clubEncontrado = clubes.find(c => c.id === clubIdBusqueda)
     if (!clubEncontrado) {
         return res.status(404).json({
-            "error": `No existe el club ${req.params.id}`
+            "error": `No existe el club ${idSolicitado}`
         })
     }
 
@@ -60,6 +76,12 @@ app.get("/api/clubes/:id", (req, res) => {
 
 app.get("/api/titulos/:club", (req, res) => {
     const clubNombreBusqueda = req.params.club.trim()
+    if (!clubNombreBusqueda) {
+        return res.status(400).json({
+            error: "Debe ingresar el nombre de un club"
+        })
+    }
+
     const clubEncontrado = clubes.find(c => c.nombre.toLowerCase() === clubNombreBusqueda.toLowerCase())
     if (!clubEncontrado) {
         return res.status(404).json({
