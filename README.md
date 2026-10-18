@@ -7,11 +7,17 @@ API REST construida con Node.js y Express para consultar clubes de la Copa Liber
 - Node.js 20 o superior
 - Yarn
 
+## Enlace al proyecto en GitHub
+
+[Ir a repositorio GitHub](https://github.com/SSAA96/evaluacion-libertadores)
+
 ## Instalación y ejecución
 
 Desde la carpeta del proyecto, instala las dependencias y levanta el servidor:
 
 ```bash
+git clone https://github.com/SSAA96/evaluacion-libertadores.git
+cd .\evaluacion-libertadores
 yarn
 yarn dev
 ```
