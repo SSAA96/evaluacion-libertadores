@@ -7,6 +7,14 @@ app.use(cors())
 
 const PORT = 3000
 
+const agregarNombrePais = (club) => {
+    const pais = paises.find((p) => p.id === club.paisId)
+    return {
+        ...club,
+        pais: pais?.nombre ?? null,
+    }
+}
+
 app.get("/api/clubes", (req, res) => {
     const { pais } = req.query
     if (pais !== undefined) {
@@ -23,7 +31,7 @@ app.get("/api/clubes", (req, res) => {
         
         const clubesFiltrados = clubes.filter(
             (club) => club.paisId === paisEncontrado.id
-        );
+        ).map(agregarNombrePais);
 
         return res.json({
             "clubes": clubesFiltrados
@@ -31,7 +39,7 @@ app.get("/api/clubes", (req, res) => {
     }
 
     res.status(200).send({
-        "clubes": clubes
+        "clubes": clubes.map(agregarNombrePais)
     })
 })
 
@@ -46,7 +54,7 @@ app.get("/api/clubes/:id", (req, res) => {
         })
     }
 
-    return res.status(200).json(clubEncontrado)
+    return res.status(200).json(agregarNombrePais(clubEncontrado))
 })
 
 app.get("/api/titulos/:club", (req, res) => {

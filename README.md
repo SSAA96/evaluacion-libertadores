@@ -41,3 +41,7 @@ GET http://localhost:3000/api/estadisticas
 ```
 
 Un club que existe pero no ha ganado la Copa devuelve `200` con `[]`. Un ID, país o nombre de club inexistente devuelve `404` con un objeto JSON que contiene `error`.
+
+## Video de demostración
+
+[Ver video en YouTube](ENLACE)
